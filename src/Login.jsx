@@ -1,26 +1,199 @@
-import React from 'react'
+import React, { use, useState } from 'react'
+import { redirect } from 'react-router-dom';
+import { FaRegEyeSlash , FaRegEye } from "react-icons/fa";
+
 
 const Login = () => {
+
+    //toogle 
+    const [login,setLogin]=useState(false);
+
+    //register 
+    const[register,setRegister]=useState({
+        name:'',
+        email:'',
+        password:''
+    });
+
+    //onChange
+    const handleChange = (e)=>{
+        const{name,value} = e.target;
+        setRegister((prev)=>({
+            ...prev,
+            [name]:value
+        }));
+    };
+
+    // registerError
+    const [registererror,setRegistererror]=useState({});
+
+    //submit
+
+    const handleSubmit = (e)=>{
+        e.preventDefault();
+        let newError = {};
+        if(register.name.trim()==''){
+            newError.name='Name is required';
+        }
+        if(register.email.trim()==''){
+            newError.email='Email is required';
+        }
+        if(register.password.trim()==''){
+            newError.password='Password is required';
+        }
+        else if(register.password.trim().length<=6){
+            newError.password='at least more than 6 character';
+        }
+
+        setRegistererror(newError);
+        if(Object.keys(newError).length==0){
+            localStorage.setItem('userName',register.name);
+            localStorage.setItem('userPassword',register.password);
+            alert('Registerd Successfully');
+            setRegister({name:'',email:'',password:''});
+        }
+        
+    }
+    
+    //password
+    const[showpassword,setShowpassword]=useState(true);
+    
   return (
-    <div>
-        <section className='h-screen bg-sky-100 flex justify-center items-center'>
-            <div className='bg-white w-180 h-150 rounded-xl shadow-2xl flex'>
-                <div className='w-120 h-full bg-red-400 rounded-xl p-15'>
-                    <h1 className='text-5xl text-gray-200  font-bold text-center'>Register</h1>
-                    <div className='bg-white w-90 h-70 mt-15 rounded-3xl p-5'>
-                        <form action="">
-                            <label htmlFor="" className='inline-block w-24 mb-7'><span className='text-xl'>Name :</span> </label> <input className='py-1 px-4 border-2 border-gray-400 rounded-xl' type="text"  placeholder='Enter Your Name' /> <br />
-                            <label htmlFor="" className='inline-block w-24 mb-7'><span className='text-xl'>Password :</span> </label> <input className='py-1 px-4 border-2 border-gray-400 rounded-xl' type="password"  placeholder='Enter Your Password' /> <br />
-                            <label htmlFor="" className='inline-block w-24'><span className='text-xl'>Email : </span> </label> <input className='py-1 px-4 border-2 border-gray-400 rounded-xl' type="email"  placeholder='Enter Your Email' /> <br />
-                        </form>
+    <>
+        <section className='bg-sky-100  h-screen flex justify-center items-center'>
+
+            {/* register form */}
+            <div className='bg-white w-full max-w-md rounded-2xl shadow-2xl p-8'>
+                {login ? (
+                     <div>
+                    <h1 className='text-3xl text-center font-bold mb-6'>Register</h1>
+                    <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
+                        <div className='relative'>
+                            <label htmlFor="name" className='text-sm font-medium block mb-1 text-gray-600'>Name</label>
+                            <input type="text"
+                            id='name'
+                            placeholder='Enter Your Name'
+                            name='name'
+                            value={register.name}
+                            onChange={handleChange}
+                            className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
+                                        ${registererror.name ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                            'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
+                                        }
+                                `}
+                            />
+                            <p className='absolute text-sm  text-red-500 '>{registererror.name} </p>
+                        </div>
+
+                        <div className='relative'>
+                            <label htmlFor="email" className='text-sm font-medium block mb-1 text-gray-600'>Email</label>
+                            <input type="email"
+                            id='email'
+                            placeholder='Enter Your Email'
+                            name='email'
+                            value={register.email}
+                            onChange={handleChange}
+                            className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
+                                        ${registererror.email ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                            'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
+                                        }
+                                `}
+                            />
+                            <p className='absolute text-sm  text-red-500 '>{registererror.email}</p>
+                        </div>
+
+                        <div className='relative'>
+                            <label htmlFor="pass" className='text-sm font-medium block mb-1 text-gray-600'>Password</label>
+                            <div className='relative flex items-center'>
+                                <input type={showpassword ? 'password' : 'text'}
+                                id='pass'
+                                value={register.password}
+                                name='password'
+                                onChange={handleChange}
+                                placeholder='Enter Your Password'
+                                
+                                className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
+                                            ${registererror.password ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                                'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
+                                            }
+                                    `}
+                                />
+                                <span className='absolute right-3 text-xl cursor-pointer' onClick={()=>setShowpassword((prev)=>!prev)}>
+                                    {showpassword ? <FaRegEyeSlash/> : <FaRegEye/>}
+                                </span>
+                            </div>
+                            <p className='absolute text-sm  text-red-500 '>{registererror.password}</p>
+                        </div>
+
+                        <button className='bg-emerald-500 text-white py-2 px-3 w-full rounded-lg mt-3 hover:bg-emerald-600 cursor-pointer'>Create Account</button>
+
+                        <p className='text-center mt-5'>Already have an account?
+                            <button type='button' onClick={()=>setLogin(false)}>
+                                            SignIn
+                            </button>
+                        </p>
+                    </form>
+                </div>
+                ):(
+                    <div>
+                        <h1 className='text-3xl text-center font-bold mb-6'>SignIn</h1>
+                        <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
+                        <div className='relative'>
+                            <label htmlFor="name" className='text-sm font-medium block mb-1 text-gray-600'>Name</label>
+                            <input type="text"
+                            id='name'
+                            placeholder='Enter Your Name'
+                            name='name'
+                            value={register.name}
+                            onChange={handleChange}
+                            className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
+                                        ${registererror.name ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                            'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
+                                        }
+                                `}
+                            />
+                            {/* <p className='absolute text-sm  text-red-500 '>{registererror.name} </p> */}
+                        </div>
+
+                        
+
+                        <div className='relative'>
+                            <label htmlFor="pass" className='text-sm font-medium block mb-1 text-gray-600'>Password</label>
+                            <div className='relative flex items-center'>
+                                <input type={showpassword ? 'password' : 'text'}
+                                id='pass'
+                                value={register.password}
+                                name='password'
+                                onChange={handleChange}
+                                placeholder='Enter Your Password'
+                                
+                                className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
+                                            ${registererror.password ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                                'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
+                                            }
+                                    `}
+                                />
+                                <span className='absolute right-3 text-xl cursor-pointer' onClick={()=>setShowpassword((prev)=>!prev)}>
+                                    {showpassword ? <FaRegEyeSlash/> : <FaRegEye/>}
+                                </span>
+                            </div>
+                            {/* <p className='absolute text-sm  text-red-500 '>{registererror.password}</p> */}
+                        </div>
+
+                        <button className='bg-sky-500 text-white py-2 px-3 w-full rounded-lg mt-3 hover:bg-sky-600 cursor-pointer'>Login</button>
+
+                        <p className='text-center mt-5'>You don't have an account?
+                            <button type='button' onClick={()=>setLogin(true)}>
+                                            Register
+                            </button>
+                        </p>
+                    </form>
                     </div>
-                </div>
-                <div >
-                    <button type='button' className='border-2 border-black py-1 px-4 rounded-xl'>LoginPage</button>
-                </div>
+                )}
+               
             </div>
         </section>
-    </div>
+    </>
   )
 }
 
