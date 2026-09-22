@@ -1,18 +1,35 @@
-import React, { use, useState } from 'react'
-import { redirect } from 'react-router-dom';
+import React, {  useState } from 'react'
+import { redirect, useNavigate } from 'react-router-dom';
 import { FaRegEyeSlash , FaRegEye } from "react-icons/fa";
 
 
 const Login = () => {
 
+    //nav
+    const nav = useNavigate();
     //toogle 
     const [login,setLogin]=useState(false);
+
+     //password
+    const[showpassword,setShowpassword]=useState(true);
+
+    // registerError
+    const [registererror,setRegistererror]=useState({});
+
+    //Login error
+    const [loginerror,setLoginerror]=useState({});
 
     //register 
     const[register,setRegister]=useState({
         name:'',
         email:'',
         password:''
+    });
+
+    //Login
+    const[validate,setValidate]=useState({
+        loginName:'',
+        loginPassword:''
     });
 
     //onChange
@@ -24,8 +41,16 @@ const Login = () => {
         }));
     };
 
-    // registerError
-    const [registererror,setRegistererror]=useState({});
+    //loginchange
+    const loginChange = (e)=>{
+        const {name,value}=e.target;
+        setValidate((prev)=>({
+            ...prev,
+            [name]:value
+        }));
+    };
+
+    
 
     //submit
 
@@ -55,8 +80,34 @@ const Login = () => {
         
     }
     
-    //password
-    const[showpassword,setShowpassword]=useState(true);
+    //submit handle
+
+    const handleLogin = (e)=>{
+        e.preventDefault();
+        let newError = {};
+        if(validate.loginName.trim()==''){
+            newError.loginName ='Name is wrong';
+        }
+        if(validate.loginPassword.trim()==''){
+            newError.loginPassword='Enter the password'
+        }
+        else if(validate.loginPassword.trim().length<6){
+            newError.loginPassword='Your password is wrong';
+        }
+        setLoginerror(newError);
+        if(Object.keys(newError).length==0){
+            let getName = localStorage.getItem('userName');
+            let getPass = localStorage.getItem('userPassword');
+            if(getName==validate.loginName.trim() && getPass ==validate.loginPassword.trim()){
+                alert('Login successfully');
+                nav('/home');
+            }
+            else{
+                alert('Invalid ')
+            }
+        }
+    }
+   
     
   return (
     <>
@@ -128,7 +179,7 @@ const Login = () => {
                         <button className='bg-emerald-500 text-white py-2 px-3 w-full rounded-lg mt-3 hover:bg-emerald-600 cursor-pointer'>Create Account</button>
 
                         <p className='text-center mt-5'>Already have an account?
-                            <button type='button' onClick={()=>setLogin(false)}>
+                            <button className='text-sm font-medium text-sky-400 hover:underline hover:decoration-2 cursor-pointer' type='button' onClick={()=>setLogin(false)}>
                                             SignIn
                             </button>
                         </p>
@@ -137,22 +188,22 @@ const Login = () => {
                 ):(
                     <div>
                         <h1 className='text-3xl text-center font-bold mb-6'>SignIn</h1>
-                        <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
+                        <form onSubmit={handleLogin} className='flex flex-col gap-6'>
                         <div className='relative'>
                             <label htmlFor="name" className='text-sm font-medium block mb-1 text-gray-600'>Name</label>
                             <input type="text"
                             id='name'
                             placeholder='Enter Your Name'
-                            name='name'
-                            value={register.name}
-                            onChange={handleChange}
+                            name='loginName'
+                            value={validate.loginName}
+                            onChange={loginChange}
                             className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
-                                        ${registererror.name ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                        ${loginerror.loginName ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
                                             'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
                                         }
                                 `}
                             />
-                            {/* <p className='absolute text-sm  text-red-500 '>{registererror.name} </p> */}
+                            <p className='absolute text-sm  text-red-500 '>{loginerror.loginName} </p>
                         </div>
 
                         
@@ -162,13 +213,13 @@ const Login = () => {
                             <div className='relative flex items-center'>
                                 <input type={showpassword ? 'password' : 'text'}
                                 id='pass'
-                                value={register.password}
-                                name='password'
-                                onChange={handleChange}
+                                value={validate.loginPassword}
+                                name='loginPassword'
+                                onChange={loginChange}
                                 placeholder='Enter Your Password'
                                 
                                 className={`py-2 px-3 w-full border-2 focus:outline-none rounded-lg transition-all
-                                            ${registererror.password ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
+                                            ${loginerror.loginPassword ? 'border-red-400 focus:ring focus:ring-2 focus:ring-red-300' :
                                                 'border-gray-300 focus:border-sky-400  focus:ring focus:ring-2 focus:ring-sky-300'
                                             }
                                     `}
@@ -177,13 +228,13 @@ const Login = () => {
                                     {showpassword ? <FaRegEyeSlash/> : <FaRegEye/>}
                                 </span>
                             </div>
-                            {/* <p className='absolute text-sm  text-red-500 '>{registererror.password}</p> */}
+                            <p className='absolute text-sm  text-red-500 '>{loginerror.loginPassword}</p>
                         </div>
 
                         <button className='bg-sky-500 text-white py-2 px-3 w-full rounded-lg mt-3 hover:bg-sky-600 cursor-pointer'>Login</button>
 
                         <p className='text-center mt-5'>You don't have an account?
-                            <button type='button' onClick={()=>setLogin(true)}>
+                            <button className='text-sm font-medium text-green-500 hover:underline hover:decoration-2 cursor-pointer' type='button' onClick={()=>setLogin(true)}>
                                             Register
                             </button>
                         </p>
