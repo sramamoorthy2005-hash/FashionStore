@@ -8,16 +8,16 @@ import Cartpage from './home/Cartpage'
 
 function App() {
   
-
+  const[cart,setCart] = useState([]);
   return (
     <>
       <Routes>
         <Route path='/' element={<Login/>}></Route>
-        <Route path='/home' element={<Home/>}></Route>
+        <Route path='/home' element={<Home cart={cart} setCart={setCart}/>} ></Route>
         <Route path='/productdetails/:id' element={<Productdetails/>}></Route>
-        <Route path='/cartPage/:setCart/:cart' element={<Cartpage/>}></Route>
+        <Route path='/cartPage' element={<Cartpage cart={cart} setCart={setCart}/>} ></Route>
         
-        </Routes>
+      </Routes>
     </>
   )
 }

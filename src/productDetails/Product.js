@@ -15,6 +15,7 @@ const  products= [
       "price": 2199.00,
       "currency": "INR",
       "isWhishList":false,
+      "stock":4,
       "in_stock": true,
       "sizes": ["M", "L", "XL"]
     },
@@ -26,6 +27,7 @@ const  products= [
       "category": "Men's Outerwear",
       "price": 3499.00, 
       "currency": "INR",
+      "stock":5,
       "in_stock": true,
       "sizes": ["S", "M", "L"]
     },
@@ -37,6 +39,7 @@ const  products= [
       "category": "Women's Western",
       "price": 1799.00,
       "currency": "INR",
+      "stock":2,
       "in_stock": true,
       "sizes": ["XS", "S", "M", "L"]
     },
@@ -48,6 +51,7 @@ const  products= [
       "category": "Women's Ethnic",
       "price": 2999.00,
       "currency": "INR",
+      "stock":1,
       "in_stock": false,
       "sizes": ["M", "L", "XL", "XXL"]
     },
@@ -59,6 +63,7 @@ const  products= [
       "category": "Women's Western",
       "price": 2599.00,
       "currency": "INR",
+      "stock":2,
       "in_stock": true,
       "sizes": ["28", "30", "32"]
     }
